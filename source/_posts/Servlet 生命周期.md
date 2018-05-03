@@ -57,9 +57,12 @@ Servlet.init()只会被调用一次，它只在Servlet 创建的时候调用，�
 此时我们启动我们的容器，这里以tomcat容器为例，启动我们的tomcat 
 查看启动日志，我们并没有发现控制台有打印 DefaultServlet init，这是我们访问一下我们的Servlet doGet方法
 我们发现打印了两行日志
+DefaultServlet construct
 DefaultServlet init
 DefaultServlet doGet
-即Servlet 在我们访问的时候被创建，并且初始化，之后再次调用不再调用Servlet.init()方法。第一次调用Servlet.doGet()的方法时，tomcat 会判断容器中是否有这个Servlet 的实例，如果有则直接调用Servlet.doGet()，如果没有则创建Servlet 并调用 init 方法。
+即Servlet 在我们访问的时候被创建，并且初始化，之后再次调用不再调用Servlet.init()方法。第一次调用
+Servlet.doGet()的方法时，tomcat 会判断容器中是否有这个Servlet 的实例，如果有则直接调用
+Servlet.doGet()，如果没有则创建Servlet 并调用 init 方法。之后再次访问就不再调用Servlet.init()
 日志如下图：
 ```
 
