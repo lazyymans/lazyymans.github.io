@@ -41,6 +41,10 @@ Servlet.init()只会被调用一次，它只在Servlet 创建的时候调用，�
   Servlet
   public class DefaultServlet extends HttpServlet {
 
+    public DefaultServlet() {
+        System.out.println("DefaultServlet construct");
+    }
+
     @Override
     public void init() throws ServletException {
         System.out.println("DefaultServlet init");
@@ -57,6 +61,12 @@ Servlet.init()只会被调用一次，它只在Servlet 创建的时候调用，�
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         System.out.println("DefaultServlet doPost");
         super.doPost(req, resp);
+    }
+
+    @Override
+    public void destroy() {
+        System.out.println("DefaultServlet destroy");
+        super.destroy();
     }
 }
 
