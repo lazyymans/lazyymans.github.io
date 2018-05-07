@@ -1,7 +1,8 @@
 ---
 title: Servlet 生命周期
 date: 2018-05-03 14:00:33
-tags:
+categories: 源码分析
+tags: 源码分析之Servlet
 ---
 
 一个Servlrt 的生命周期可以被定义为从创建到销毁的整个过程。以下是Servlrt 所遵循的路径，我们先看下Servlet
