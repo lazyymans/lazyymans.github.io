@@ -8,13 +8,9 @@ tags: Eureka
 ### 创建“服务注册中心”
 
 创建一个基础的Spring Boot EurekaServer项目，在pom.xml 中引入需要的依赖
-
 ​	注意：在创建Spring Boot 项目时，版本的选择。本次系列文章均采用最新版本的2.0.1[版本对应关系](https://blog.csdn.net/stloven5/article/details/78285541)
-
 ​		为什么要在这里说明一下，因为不同的版本，你写的pom依赖可能不同。如下面的 服务注册依赖，
-
 ​		在Spring Boot 1.5.x 版本中  spring-cloud-starter-eureka-server 是这个，如何去找准确的依赖，要去
-
 ​		看官方文档，去里面找。如[Spring Boot 2.0.1 Eureka Server](http://cloud.spring.io/spring-cloud-static/Finchley.RC1/multi/multi_spring-cloud-eureka-server.html)
 
 ```xml
@@ -117,7 +113,6 @@ public class EurekaServerApplication {
 ```
 
 这里使用更改了创建项目时的`@SpringBootApplication`注解，变为`@SpringCloudApplication`，其实就是一个注解的整合，这里不做过多说明。
-
 接下来就是`application.yml` 的配置(默认创建项目时生成的是`application.properties` 文件)
 
 ```yaml
@@ -239,9 +234,7 @@ spring:
 127.0.0.1 peer3
 ```
 
-因为我们要做Eureka Server 的集群，所以这个在我的`application.yml` 配置中，分别有三个配置
-
-peer1、peer2、peer3。然后我们启动Eureka Server 三次，根据不同的配置，在IDEA 中如何启动这三个配置。
+因为我们要做Eureka Server 的集群，所以这个在我的`application.yml` 配置中，分别有三个配置peer1、peer2、peer3。然后我们启动Eureka Server 三次，根据不同的配置，在IDEA 中如何启动这三个配置。
 
 ![](https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/eureka1.png?raw=true)
 
@@ -249,15 +242,7 @@ peer1、peer2、peer3。然后我们启动Eureka Server 三次，根据不同的
 
 ![](https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/eureka2.png?raw=true)
 
-可以看到我们的集群已经搭建好了。这里我们为什么要注册自己（register-with-eureka: true和
-
-fetch-registry: true这两个配置），我们可以看到下面那个红框中的数据，registered-replicas（注册副本）、
-
-unavailable-replicas（不可用副本）、available-replicas（可用副本）。当我们其中某一个Eureka Server 死掉
-
-的时候，unavailable-replicas就会有死掉的是哪一个Eureka Server，根据这个，我们就可以快速的重启对应的
-
-Eureka Server。
+可以看到我们的集群已经搭建好了。这里我们为什么要注册自己（register-with-eureka: true和fetch-registry: true这两个配置），我们可以看到下面那个红框中的数据，registered-replicas（注册副本）、unavailable-replicas（不可用副本）、available-replicas（可用副本）。当我们其中某一个Eureka Server 死掉的时候，unavailable-replicas就会有死掉的是哪一个Eureka Server，根据这个，我们就可以快速的重启对应的Eureka Server。
 
 通常情况下是，启动两个注册中心c1和c2，但是在c1注册中心的available-replicas项中没有c2存在，反而是unavailable-replicas中有。
 
@@ -275,9 +260,7 @@ fetch-registry: true
 
 ![](https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/eureka3.png?raw=true)
 
-我们可以看到 `http://peer2:9101/eureka/` 出现在 unavailable-replicas，在我们的注册区EUREKA-SERVER 中也
-
-只有两个Eureka Server。
+我们可以看到 `http://peer2:9101/eureka/` 出现在 unavailable-replicas，在我们的注册区EUREKA-SERVER 中也只有两个Eureka Server。
 
 ### 创建“服务提供方”
 
@@ -377,9 +360,7 @@ fetch-registry: true
 </project>
 ```
 
-然后在主应用类上加上`@EnableDiscoveryClient`注解，该注解能激活Eureka中的`DiscoveryClient`实现，才能实
-
-现Controller中对服务信息的输出。
+然后在主应用类上加上`@EnableDiscoveryClient`注解，该注解能激活Eureka中的`DiscoveryClient`实现，才能实现Controller中对服务信息的输出。
 
 ```java
 /**
@@ -418,12 +399,8 @@ spring:
 
 ![](https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/eureka4.png?raw=true)
 
-我们可以看到我们的服务中心已经注册了Pay Server，现在我们将 peer1的Eureka Server杀掉，为什么杀掉它，
-
-因为我们的Pay Server 中，`defaultZone`是向`http://peer1:9100/eureka/`注册的。显示如下图：
+我们可以看到我们的服务中心已经注册了Pay Server，现在我们将 peer1的Eureka Server杀掉，为什么杀掉它，因为我们的Pay Server 中，`defaultZone`是向`http://peer1:9100/eureka/`注册的。显示如下图：
 
 ![](https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/eureka5.png?raw=true)
 
-可以看到，我们的`unavailable-replicas` 中出现了`http://peer1:9100/eureka/`，但是我们的注册区任然是存在
-
-Pay Server 这个服务的。
+可以看到，我们的`unavailable-replicas` 中出现了`http://peer1:9100/eureka/`，但是我们的注册区任然是存在Pay Server 这个服务的。
