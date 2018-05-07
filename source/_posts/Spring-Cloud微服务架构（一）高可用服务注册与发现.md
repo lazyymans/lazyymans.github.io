@@ -47,6 +47,12 @@ tags: Eureka
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
 		</dependency>
+      
+      	<!-- 断路器 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+        </dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -113,6 +119,8 @@ public class EurekaServerApplication {
 ```
 
 这里使用更改了创建项目时的`@SpringBootApplication`注解，变为`@SpringCloudApplication`，其实就是一个注解的整合，这里不做过多说明。
+
+注意：使用`@SpringCloudApplication`时，需要加入断路器的依赖。使用`@SpringBootApplication`则可以不加断路器依赖，原因是`@SpringCloudApplication`注解里面包含`@EnableCircuitBreaker`这个注解，它需要断路器的自动配置。
 接下来就是`application.yml` 的配置(默认创建项目时生成的是`application.properties` 文件)
 
 ```yaml
@@ -306,6 +314,12 @@ fetch-registry: true
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+      
+      	<!-- 断路器 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
         </dependency>
 
         <dependency>
