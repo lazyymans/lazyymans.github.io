@@ -57,16 +57,6 @@ tags: [Ribbon,Feign]
             <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
         </dependency>
 
-        <!-- 服务消费者 -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -110,7 +100,7 @@ tags: [Ribbon,Feign]
 </project>
 ```
 
-创建好Provider Server 项目后，将`@SpringBootApplication`修改为`SpringCloudApplication`注解，将此服务注册到`Eureka Server`中，代码如下：
+创建好Provider Server 项目后，主应用类将`@SpringBootApplication`修改为`SpringCloudApplication`注解，将此服务注册到`Eureka Server`中，代码如下：
 
 ```java
 @EnableEurekaClient
@@ -206,7 +196,24 @@ public class TestProviderController {
 
 上面，我们已经创建好了`Provider Server`服务提供方，在`Pay Server`中使用`Ribbon `来进行消费。
 
-#### 1、修改`Pay Server`主应用类：
+#### 1、在pom.xml 中引入新的依赖
+
+```xml
+<!-- 服务消费者 ribbon openfeign 这里直接把两个依赖都加上 -->
+<dependency>
+  <groupId>org.springframework.cloud</groupId>
+  <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+</dependency>
+
+<dependency>
+  <groupId>org.springframework.cloud</groupId>
+  <artifactId>spring-cloud-starter-openfeign</artifactId>
+</dependency>
+```
+
+
+
+#### 2、修改`Pay Server`主应用类：
 
 ```java
 @EnableEurekaClient
@@ -225,7 +232,7 @@ public class PayServerApplication {
 }
 ```
 
-#### 2、创建TestPayController 来消费`Provider Server`的 testProvider 服务，通过直接RestTemplate来调用服务。
+#### 3、创建`TestPayController.java` 来消费`Provider Server`的 testProvider 服务，通过直接RestTemplate来调用服务。
 
 ```java
 @RestController
@@ -240,6 +247,9 @@ public class TestPayController {
     @Autowired
     private LoadBalancerClient loadBalancerClient;
 
+  	/**
+  	 * Ribbon方式访问
+  	 */
     @RequestMapping("/testProviderRibbon")
     public String testProviderRibbon(){
         ServiceInstance instance = this.loadBalancerClient.choose("provider-server");
@@ -250,7 +260,7 @@ public class TestPayController {
 }
 ```
 
-#### 3、修改`application.yml`
+#### 4、修改`application.yml`
 
 ```yaml
 ---
@@ -274,7 +284,8 @@ provider-server:
 #    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule #随机分配
 #    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.WeightedResponseTimeRule	#加权响应时间
 
-#断路器 将 hystrix 的超时时间设置成 60000 毫秒（60秒）
+# 断路器 将 hystrix 的超时时间设置成 60000 毫秒（60秒）
+# 解决第一次请求报超时异常的方案，因为 hystrix 的默认超时时间是 1 秒，因此请求超过该时间后，就会出现页面超时显示 ：
 hystrix:
   command:
     default:
@@ -300,3 +311,95 @@ hystrix:
 
 ### Feign
 
+之前我们做`Ribbon`的时候，已经做了很多的准备工作，并且已经在pom.xml 文件中新添加了Feign 的依赖，所以这里我们直接开始。
+
+#### 1、添加访问远端服务 Feign 客户端`ProviderFeginCustomClient.java`，代码如下：
+
+```java
+@FeignClient(name = "provider-server")
+public interface ProviderFeginCustomClient {
+
+  	//两种访问方式都可以
+    @RequestLine("GET /api/provider/testProvider")
+    //@RequestMapping(value = "/api/provider/testProvider", method = RequestMethod.GET)
+    public String testProvider();
+
+}
+```
+
+#### 2、在`TestProviderController.java`中添加 Feign 方式访问的接口，代码如下：
+
+```java
+@RestController
+@RequestMapping("/api/pay")
+public class TestPayController {
+
+    private final static Logger log = LoggerFactory.getLogger(TestPayController.class);
+
+    @Autowired
+    private ProviderFeginCustomClient feignClient;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private LoadBalancerClient loadBalancerClient;
+	
+  	/**
+  	 * Feign方式访问
+  	 */
+    @RequestMapping("/testProviderFeign")
+    public String testProviderFeign(){
+        ServiceInstance instance = this.loadBalancerClient.choose("provider-server");
+        log.info("testProviderFeign >>>>>" + " " + instance.getServiceId() + ":" + instance.getHost() + ":" + instance.getPort());
+        return feignClient.testProvider();
+    }
+
+  	/**
+  	 * Ribbon方式访问
+  	 */
+    @RequestMapping("/testProviderRibbon")
+    public String testProviderRibbon(){
+        ServiceInstance instance = this.loadBalancerClient.choose("provider-server");
+        log.info(">>>>>" + " " + instance.getServiceId() + ":" + instance.getHost() + ":" + instance.getPort());
+        return restTemplate.postForObject("http://provider-server/api/provider/testProvider", null, String.class);
+    }
+
+}
+```
+
+重新启动`Pay Server`服务，访问`http://localhost:9200/api/pay/testProviderFeign`。
+调用日志：
+![](https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/ribbon5.png?raw=true)
+访问结果：
+![](https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/ribbon6.png?raw=true)
+根据日志和访问结果，我们的Feign 是配置成功了。这里的端口很明显是随机的，应为我们在做`Ribbon`的时候将它设置成了随机的负载均衡调度。到此`Ribbon`和`Feign`的服务消费就结束了。
+
+那么，我们在开发的时候会想，到底使用`Ribbon`呢，还是`Feign`呢？
+
+现在我们就来分析一波，从代码上来看，我们使用`Ribbon`很方便快捷，只要在服务主应用类上加入下面一段代码。
+```java
+@Bean
+@LoadBalanced   //开启负载均衡
+RestTemplate restTemplate(){
+  return new RestTemplate();
+}
+```
+
+然后使用的时候，只要在其中注入 `RestTemplate`即可使用，通过调用`RestTemplate`的接口即可，例如下面的代码片
+
+```java
+return restTemplate.postForObject("http://provider-server/api/provider/testProvider", null, String.class);
+```
+
+反观`Feign`，需要创建一个 Feign 客户端甚至是Feign 的配置（此案例中还未涉及Feign 的配置），显得旧没有那么方便快捷了。我们可以看到上面的 Feign 客户端`ProviderFeginCustomClient.java`，在调用的时候，注入Feign 客户端，直接调用接口即可，如下面的代码片段。
+
+```java
+return feignClient.testProvider();
+```
+
+我们发现 `Feign`的调用方式就很像调用本地的方法，甚至感觉不到我们是在跨服务调用。
+
+这里笔者的想法是这样的，在我们实际的项目中，如果我在消费者服务（这里也就是`Pay Server`）在不用过多的去调用提供方（这里也就是`Provider Server`）的接口时，我们倾向于使用`Ribbon`，因为它够方便，够简单。反之，我们倾向于使用`Feign`来做服务消费。我们可以看到`Feign`更具有封装性，将我们所有的服务调用，全部可以封装在 FeignClient 中，维护起来也方便。
+
+我们可以一开始的时候使用`Ribbon`来做服务间的调用，之后变多的情况下，考虑代码重构。
