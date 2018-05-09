@@ -1,8 +1,8 @@
 ---
 title: Spring Cloud微服务架构（一）高可用服务注册与发现
 date: 2018-05-07 17:02:25
-categories: Spring Cloud
 tags: Eureka
+categories: Spring Cloud
 ---
 
 ### 创建“服务注册中心”

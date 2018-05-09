@@ -1,8 +1,8 @@
 ---
 title: Spring Cloud微服务架构（二）服务消费者
 date: 2018-05-07 19:36:11
-categories: Spring Cloud
 tags: [Ribbon,Feign]
+categories: Spring Cloud
 ---
 
 在上一篇中[《Spring Cloud微服务架构（一）高可用服务注册与发现》](https://lazyymans.github.io/2018/05/07/Spring-Cloud%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%EF%BC%88%E4%B8%80%EF%BC%89%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E4%B8%8E%E5%8F%91%E7%8E%B0/)中，我们已经创建了`服务注册中心`，并且注册了一个`服务提供者 pay-server`，那么接下来我们要怎么去消费提供者提供的接口呢？
@@ -319,9 +319,7 @@ hystrix:
 @FeignClient(name = "provider-server")
 public interface ProviderFeginCustomClient {
 
-  	//两种访问方式都可以
-    @RequestLine("GET /api/provider/testProvider")
-    //@RequestMapping(value = "/api/provider/testProvider", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/provider/testProvider", method = RequestMethod.GET)
     public String testProvider();
 
 }
