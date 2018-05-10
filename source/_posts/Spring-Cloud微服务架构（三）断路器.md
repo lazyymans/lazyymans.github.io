@@ -16,7 +16,7 @@ categories: Spring Cloud
 
 继续之前的的两个服务来做断路器测试。
 
-### 1、启动Eureka Server、Pay Server、Provider Server
+### 启动Eureka Server、Pay Server、Provider Server
 
 ![](https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/hystrix2.png?raw=true)
 访问`http://localhost:9200/api/pay/testProviderRibbon`，调用`Provider Server`的服务，可以看到我们的测试返回 testProvider success。
