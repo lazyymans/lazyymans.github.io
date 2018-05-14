@@ -209,7 +209,7 @@ static final int hash(Object key) {
 final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                boolean evict) {
   Node<K,V>[] tab; Node<K,V> p; int n, i;
-  //这里table 通常情况下为null，除非在创建HashMap 的时候使用的是 HashMap(Map<? extends K, ? extends V> m)这一个构造器。
+  //这里table 通常情况下第一次put值时为null，除非在创建HashMap 的时候使用的是 HashMap(Map<? extends K, ? extends V> m)这一个构造器。
   if ((tab = table) == null || (n = tab.length) == 0)
     //初始化table 或者给table 扩容
     n = (tab = resize()).length;
