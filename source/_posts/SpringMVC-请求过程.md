@@ -11,7 +11,7 @@ categories: SpringMVC
 
 分析，`DispatcherServlet`集成顶端接口`Servlet`，那么真个请求，也就是从`Servlet.service`开始。下面我们开始分析。
 
-![https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/springmvc5.png?raw=true]()
+![](https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/springmvc5.png?raw=true)
 
 ```java
 HttpServlet
@@ -221,7 +221,7 @@ protected void doDispatch(HttpServletRequest request, HttpServletResponse respon
 
 SpringMVC核心架构图
 
-![https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/springmvc6.png?raw=true]()
+![](https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/springmvc6.png?raw=true)
 
 ```
 1. 用户向服务器发送请求，请求被Spring 前端控制Servelt DispatcherServlet捕获；

@@ -168,17 +168,17 @@ public void refresh() throws BeansException, IllegalStateException {
 
 调用图如下：
 
-![https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/springmvc1.png?raw=true]()
+![](https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/springmvc1.png?raw=true)
 
-![https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/springmvc2.png?raw=true]()
+![](https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/springmvc2.png?raw=true)
 
-![https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/springmvc3.png?raw=true]()
+![](https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/springmvc3.png?raw=true)
 
-![https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/springmvc4.png?raw=true]()
+![](https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/springmvc4.png?raw=true)
 
 接下来，开始初始化SpringMVC容器（SpringMVC子容器）`DispatcherServlet`初始化，我们先来看一张`DispatcherServlet`继承图
 
-![https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/springmvc5.png?raw=true]()
+![](https://github.com/lazyymans/lazyymans.github.io/blob/hexo/source/img/springmvc5.png?raw=true)
 
 之前我们分析了`Servlet`的生命周期，不难得出分析`DispatcherServlet`的初始化，也就是从`Servlet.init`开始
 
