@@ -2,7 +2,7 @@
 title: SpringMVC 请求过程
 date: 2018-05-23 03:14:25
 tags: SpringMVC
-categories: 源码分析
+categories: SpringMVC
 ---
 
 ## SpringMVC 请求过程

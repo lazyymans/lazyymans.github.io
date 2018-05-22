@@ -2,7 +2,7 @@
 title: SpringMVC 启动初始化过程分析
 date: 2018-05-14 17:42:56
 tags: SpringMVC
-categories: 源码分析
+categories: SpringMVC
 ---
 
 ## SpringMVC 启动过程分析
